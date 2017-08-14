@@ -1,7 +1,9 @@
 package com.whitbread.search;
 
 
+import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -35,12 +37,32 @@ public class SearchControllerTest {
 
     @Test
     public void shouldReturnHttpResponseOKWhenSearchEndpointAccessed() throws Exception {
-        String expectedResult = "Success";
 
-        mockMvc.perform(get("/search"))
+        mockMvc.perform(get("/places/search?name=Harrow"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
-                .andExpect(content().string(expectedResult))
+                .andExpect(content().string(notNullValue()))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnHttpNotFoundWhenInvalidEndpointAccessed() throws Exception {
+        mockMvc.perform(get("/places/search/INVALID?name=Harrow"))
+                .andExpect(status().isNotFound())
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnHttpBadRequestWhenInvalidRequestParamUsed() throws Exception {
+        mockMvc.perform(get("/places/search?INVALID=Harrow"))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+    }
+
+    @Test
+    public void shouldReturnHttpMethodNotAllowedWhenPostUsed() throws Exception {
+        mockMvc.perform(post("/places/search?name=Harrow"))
+                .andExpect(status().isMethodNotAllowed())
                 .andReturn();
     }
 }
