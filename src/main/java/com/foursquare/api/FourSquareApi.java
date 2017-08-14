@@ -4,43 +4,56 @@ import java.net.URI;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @Service
 public class FourSquareApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FourSquareApi.class.getName());
 
-    public String venuesExplore(String locationName) {
+    @Value("${fourSquare.api.venuesUri}")
+    private String venuesUri;
+
+    @Value("${fourSquare.api.oauthToken}")
+    private String oauthToken;
+
+    @Value("${fourSquare.api.version}")
+    private String version;
+
+    private RestTemplateBuilder restClientBuilder;
+
+    public FourSquareApi(RestTemplateBuilder restClientBuilder) {
+        this.restClientBuilder = restClientBuilder;
+    }
+
+    public String venuesExplore(String locationName) throws FourSquareApiAccessException {
         URI uri = getUriWithParams(locationName);
         HttpEntity<String> response;
         try {
-            response = new RestTemplate().exchange(uri, HttpMethod.GET, getHttpEntity(), String.class);
+            response = restClientBuilder.getRestTemplate().exchange(uri, HttpMethod.GET,
+                    restClientBuilder.getHttpEntity(), String.class);
         } catch (Exception e) {
             LOGGER.error("Error!! accessing FourSquare endpoint {}", uri, e);
-            throw e;
+            throw new FourSquareApiAccessException(e.getMessage(), e);
         }
+
         return response.getBody();
     }
 
-    private HttpEntity getHttpEntity() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-        return new HttpEntity(headers);
+    public String getExploreUri() {
+        return venuesUri + "/explore";
     }
 
     private URI getUriWithParams(String locationName) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://api.foursquare.com/v2/venues/explore")
-                .queryParam("near", locationName)
-                .queryParam("oauth_token", "HDQQIKCNWX0PDP4LG2C5FWRQNN3O20WQEOTOYULRP1XMM5LR")
-                .queryParam("v", "20170813");
-
-        return builder.build().encode().toUri();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap();
+        params.add("near", locationName);
+        params.add("oauth_token", oauthToken);
+        params.add("v", version);
+        return restClientBuilder.getUri(getExploreUri(), params);
     }
 }
