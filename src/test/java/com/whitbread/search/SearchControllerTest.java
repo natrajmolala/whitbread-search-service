@@ -35,7 +35,7 @@ public class SearchControllerTest {
 
     @Test
     public void shouldReturnHttpResponseOKWhenSearchEndpointAccessed() throws Exception {
-        String expectedResult = "{\"result\":\"Success\"}";
+        String expectedResult = "Success";
 
         mockMvc.perform(get("/search"))
                 .andExpect(status().isOk())
