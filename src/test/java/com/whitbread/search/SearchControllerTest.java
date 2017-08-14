@@ -65,4 +65,15 @@ public class SearchControllerTest {
                 .andExpect(status().isMethodNotAllowed())
                 .andReturn();
     }
+
+    @Test
+    public void shouldReturnSearchResponseWithRecommendedPlacesNearSearchedPlace() throws Exception {
+        String expectedResult = "{\"name\":\"Harrow\",\"recommendedVenues\":[{\"name\":\"Playgolf London\"},{\"name\":\"Kebab Land\"}]}";
+        mockMvc.perform(get("/places/search?name=Harrow"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(content().string(expectedResult))
+                .andReturn();
+    }
+
 }
