@@ -1,4 +1,4 @@
-package com.foursquare.api;
+package com.whitbread.foursquare;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -13,6 +13,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import java.net.URI;
 
+import com.whitbread.foursquare.FourSquareApi;
+import com.whitbread.foursquare.FourSquareApiAccessException;
+import com.whitbread.foursquare.RestTemplateBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,7 +33,7 @@ public class FourSquareApiTest {
 
     private FourSquareApi fourSquareApi;
     private MockRestServiceServer mockServer;
-    private String validUri = "https://api.foursquare.com/v2/venues/explore?near=Harrow&oauth_token=HDQQIKCNWX0PDP4LG2C5FWRQNN3O20WQEOTOYULRP1XMM5LR&v=20170813";
+    private String validUri = "https://foursquare.foursquare.com/v2/venues/explore?near=Harrow&oauth_token=HDQQIKCNWX0PDP4LG2C5FWRQNN3O20WQEOTOYULRP1XMM5LR&v=20170813";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -65,7 +68,7 @@ public class FourSquareApiTest {
         thrown.expectMessage("400 Bad Request");
 
         when(restTemplateBuilder.getRestTemplate()).thenReturn(new RestTemplate());
-        String invalidUri = "https://api.foursquare.com/v2/venues/explore?near=Harrow&oauth_token=INVALID_TOKEN&v=000";
+        String invalidUri = "https://foursquare.foursquare.com/v2/venues/explore?near=Harrow&oauth_token=INVALID_TOKEN&v=000";
         when(restTemplateBuilder.getUri(anyString(), any())).thenReturn(new URI(invalidUri));
 
         mockServer = MockRestServiceServer.createServer(restTemplateBuilder.getRestTemplate());

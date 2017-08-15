@@ -1,4 +1,4 @@
-package com.whitbread.search;
+package com.whitbread;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

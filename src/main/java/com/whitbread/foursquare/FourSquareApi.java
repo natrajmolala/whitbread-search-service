@@ -1,4 +1,4 @@
-package com.foursquare.api;
+package com.whitbread.foursquare;
 
 import java.net.URI;
 
@@ -26,6 +26,10 @@ public class FourSquareApi {
     private String version;
 
     private RestTemplateBuilder restClientBuilder;
+
+    public FourSquareApi() {
+        restClientBuilder = new RestTemplateBuilder();
+    }
 
     public FourSquareApi(RestTemplateBuilder restClientBuilder) {
         this.restClientBuilder = restClientBuilder;

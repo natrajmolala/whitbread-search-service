@@ -1,4 +1,4 @@
-package com.foursquare.api;
+package com.whitbread.foursquare;
 
 import java.net.URI;
 

@@ -1,4 +1,4 @@
-package com.foursquare.api;
+package com.whitbread.foursquare;
 
 public class FourSquareApiAccessException extends Exception {
 
